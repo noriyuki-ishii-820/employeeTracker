@@ -1,5 +1,6 @@
 const inquirer = require("inquirer");
 var mysql = require("mysql");
+const cTable = require("console.table");
 
 var connection = mysql.createConnection({
   host: "localhost",
@@ -12,7 +13,7 @@ var connection = mysql.createConnection({
 
   // Your password
   password: "Kreva141!", // delete password before commiting
-  database: "great_bayDB",
+  database: "employee_DB",
 });
 
 connection.connect(function (err) {
@@ -76,8 +77,11 @@ function startSearch() {
 }
 
 function viewEmployees() {
-  var query = "Select * from employee_DB.employee";
+  const query =
+    "SELECT employee.id, employee.first_name, employee.last_name, role.title, department.department_name AS department, role.salary, concat(manager.first_name, ' ', manager.last_name) AS manager FROM employee LEFT JOIN ON employee.role_id = role.id LEFT JOIN department ON department.id = role.department_id LEFT JOIN employee manager ON manager.id = employee.manager_id;";
+
   connection.query(query, function (err, res) {
+    if (err) throw err;
     console.table(res);
     startSearch();
   });
