@@ -2,27 +2,27 @@ DROP DATABASE IF EXISTS employee_DB;
 CREATE database employee_DB;
 USE employee_DB;
 CREATE TABLE department (
-    id INT NOT NULL AUTO_INCREMENT,
-    department_name VARCHAR (100) NOT NULL,
-    PRIMARY KEY (id)
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR (100) UNIQUE NOT NULL
 );
 CREATE TABLE role (
-    id INT NOT NULL AUTO_INCREMENT,
-    title VARCHAR (30) NULL,
-    salary DECIMAL (10, 2) NULL,
-    department_id int (10) NOT NULL,
-    FOREIGN KEY (department_id) REFERENCES department (id),
-    PRIMARY KEY (id)
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR (30) UNIQUE NULL,
+    salary DECIMAL NOT NULL,
+    department_id INT NOT NULL,
+    INDEX dep_ind (department_id),
+    CONSTRAINT fk_department FOREIGN KEY (department_id) REFERENCES department(id)
 );
 CREATE TABLE employee (
-    id INT NOT NULL AUTO_INCREMENT,
-    first_name VARCHAR (30) NULL,
-    last_name VARCHAR (30) NULL,
-    role_id INT,
-    manager_id INT NULL,
-    FOREIGN KEY (role_id) REFERENCES role (id),
-    FOREIGN KEY (manager_id) REFERENCES employee (id),
-    PRIMARY KEY (id)
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    first_name VARCHAR (30) NOT NULL,
+    last_name VARCHAR (30) NOT NULL,
+    role_id INT NOT NULL,
+    INDEX role_ind (role_id),
+    CONSTRAINT fk_role FOREIGN KEY (role_id) REFERENCES role(id),
+    manager_id INT,
+    INDEX man_ind (manager_id),
+    CONSTRAINT fk_manager FOREIGN KEY (manager_id) REFERENCES employee(id)
 );
 SELECT *
 FROM department;
