@@ -87,4 +87,33 @@ function viewEmployees() {
   });
 }
 
+function viewEmployeesByDept() {
+  const query = "SELECT name FROM department";
+  connection.query(query, function (err, res) {
+    if (err) throw err;
+    //console.log(res);
+
+    inquirer
+      .prompt([
+        {
+          type: "list",
+          message: "Which department would you like to check?",
+          name: "choices",
+          choices: res,
+        },
+      ])
+      .then(function (answer) {
+        const query2 =
+          "SELECT employee.id, employee.first_name, employee.last_name, role.title, department.name AS department, role.salary FROM employee LEFT JOIN role on employee.role_id = role.id LEFT JOIN department ON role.department_id = department.id WHERE department.name =?";
+
+        connection.query(query2, [answer.choices], function (err, res) {
+          console.log(res);
+          if (err) throw err;
+          console.table(res);
+          startSearch();
+        });
+      });
+  });
+}
+
 startSearch();
