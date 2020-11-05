@@ -35,6 +35,7 @@ function startSearch() {
         name: "choices",
         choices: [
           "View All Employees",
+          "View All Roles",
           "View All Employees by Department",
           "View All Employees by Manager",
           "Add a new Employee",
@@ -49,6 +50,10 @@ function startSearch() {
       switch (answer.choices) {
         case "View All Employees":
           viewEmployees();
+          break;
+
+        case "View All Roles":
+          viewRoles();
           break;
 
         case "View All Employees by Department":
@@ -120,6 +125,21 @@ function viewEmployees() {
     console.log(
       "\n" + "-----------------EMPLOYEE LIST------------------------"
     );
+    console.table(res);
+    console.log(
+      "\n" + "------------------------------------------------------"
+    );
+    startSearch();
+  });
+}
+
+// working
+function viewRoles() {
+  const query = "SELECT title, salary FROM role";
+
+  connection.query(query, function (err, res) {
+    if (err) throw err;
+    console.log("\n" + "-----------------ROLE LIST------------------------");
     console.table(res);
     console.log(
       "\n" + "------------------------------------------------------"
@@ -279,50 +299,71 @@ function addDepartment() {
     });
 }
 
-// not working yet
+// working
 
 function addRole() {
-  inquirer
-    .prompt([
-      {
-        name: "roleName",
-        type: "input",
-        message: "What is the name of the new role?",
-      },
-      {
-        name: "roleSalary",
-        type: "input",
-        message: "What is the salary (AUD) of the new role?",
-      },
-    ])
-
-    .then(function (answer) {
-      connection.query("INSERT INTO role SET ?", {
-        title: answer.roleName,
-        salary: answer.roleSalary,
-      });
-      console.log("Added the new role of: " + answer.roleName);
-      startSearch();
-    });
-}
-
-function updateRole() {
-  const query =
-    "SELECT CONCAT(employee.first_name, ' ', employee.last_name) AS name FROM employee";
-  connection.query(query, function (err, res) {
-    if (err) throw err;
-
+  const query = "SELECT name FROM department";
+  connection.query(query, function (err, results) {
     inquirer
       .prompt([
         {
+          name: "roleName",
+          type: "input",
+          message: "What is the name of the new role?",
+        },
+        {
+          name: "roleSalary",
+          type: "input",
+          message: "What is the salary of the new role?",
+        },
+        {
+          name: "roleDept",
           type: "list",
-          message: "Which manager's team would you like to check?",
-          name: "choices",
+          message: "Which department would this role belong to?",
+          choices: results,
+        },
+      ])
+      .then(function (answer) {
+        connection.query(
+          `INSERT INTO role (title, salary, department_id) VALUES ("${answer.roleName}", "${answer.roleSalary}", (SELECT id FROM department WHERE name = "${answer.roleDept}"));`
+        );
+        console.log("------------------------------------------------------");
+        console.log("Added the new role of: " + answer.roleName);
+        console.log("------------------------------------------------------");
+        startSearch();
+      });
+  });
+}
+
+// still working on this
+function updateRole() {
+  let query =
+    "SELECT CONCAT(employee.first_name, ' ', employee.last_name) AS name, role.title FROM employee;";
+  connection.query(query, function (err, res) {
+    inquirer
+      .prompt([
+        {
+          name: "updateEmployee",
+          type: "list",
+          message: "Select an employee whom you would like to update.",
           choices: res,
+        },
+        {
+          name: "UpdateRole",
+          type: "list",
+          message: "Choose a role",
+          choices: findRole(),
         },
       ])
       .then(function (answer) {
         console.log(answer);
+        connection.query(
+          `UPDATE employee (id, title) VALUES ("${answer.roleName}", "${answer.roleSalary}", (SELECT id FROM department WHERE name = "${answer.roleDept}"));`
+        );
+        console.log("------------------------------------------------------");
+        console.log("Added the new role of: " + answer.roleName);
+        console.log("------------------------------------------------------");
+        startSearch();
       });
   });
 }
