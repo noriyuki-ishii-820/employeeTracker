@@ -116,4 +116,35 @@ function viewEmployeesByDept() {
   });
 }
 
+function viewEmployeesByManager() {
+  const query =
+    "SELECT CONCAT(employee.first_name, ' ', employee.last_name) AS name FROM employee LEFT JOIN role ON employee.role_id = role.id  WHERE role.title LIKE '%Manager' OR '%manager'";
+  connection.query(query, function (err, res) {
+    console.log(res);
+    if (err) throw err;
+
+    inquirer
+      .prompt([
+        {
+          type: "list",
+          message: "Which manager's team would you like to check?",
+          name: "choices",
+          choices: res,
+        },
+      ])
+      .then(function (answer) {
+        console.log(answer);
+        const query2 =
+          "SELECT employee.id, employee.first_name, employee.last_name, role.title, department.name AS department, role.salary FROM employee LEFT JOIN role on employee.role_id = role.id LEFT JOIN department ON role.department_id = department.id WHERE department.id = manager_id;";
+
+        connection.query(query2, [answer.choices], function (err, res) {
+          console.log(res);
+          if (err) throw err;
+          console.table(res);
+          startSearch();
+        });
+      });
+  });
+}
+
 startSearch();
