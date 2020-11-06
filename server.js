@@ -338,7 +338,7 @@ function addRole() {
 // still working on this
 function updateRole() {
   let query =
-    "SELECT CONCAT(employee.first_name, ' ', employee.last_name) AS name, role.title FROM employee;";
+    "SELECT CONCAT(first_name, ' ', last_name) AS name FROM employee;";
   connection.query(query, function (err, res) {
     inquirer
       .prompt([
@@ -349,21 +349,30 @@ function updateRole() {
           choices: res,
         },
         {
-          name: "UpdateRole",
+          name: "updateRole",
           type: "list",
-          message: "Choose a role",
+          message: "Choose this employee's new role",
           choices: findRole(),
         },
       ])
       .then(function (answer) {
         console.log(answer);
-        connection.query(
-          `UPDATE employee (id, title) VALUES ("${answer.roleName}", "${answer.roleSalary}", (SELECT id FROM department WHERE name = "${answer.roleDept}"));`
-        );
-        console.log("------------------------------------------------------");
-        console.log("Added the new role of: " + answer.roleName);
-        console.log("------------------------------------------------------");
-        startSearch();
+        const query = `UPDATE employee SET role_id = (SELECT id FROM role WHERE title = ?) WHERE CONCAT(first_name,' ',last_name)='${answer.updateEmployee}'`;
+
+        connection.query(query, [answer.updateRole], function (err, res) {
+          if (err) throw err;
+
+          console.log("------------------------------------------------------");
+          console.log(
+            "Updated the role of " +
+              answer.updateEmployee +
+              " to " +
+              answer.updateRole +
+              "."
+          );
+          console.log("------------------------------------------------------");
+          startSearch();
+        });
       });
   });
 }
