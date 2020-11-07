@@ -164,10 +164,14 @@ function viewRoles() {
 
   connection.query(query, function (err, res) {
     if (err) throw err;
-    console.log("\n" + "-----------------ROLE LIST------------------------");
+    console.log(
+      chalk.magenta(
+        "\n" + "-----------------ROLE LIST---------------------------" + "\n"
+      )
+    );
     console.table(res);
     console.log(
-      "\n" + "------------------------------------------------------"
+      chalk.magenta("------------------------------------------------------")
     );
     startSearch();
   });
@@ -195,15 +199,21 @@ function viewEmployeesByDept() {
           console.log(res);
           if (err) throw err;
           console.log(
-            "\n" +
-              "------------ " +
-              answer.choices +
-              " Department -----------------------------"
+            chalk.cyan(
+              "\n" +
+                "------------ " +
+                answer.choices +
+                " Department -------------------------" +
+                "\n"
+            )
           );
           console.table(res);
 
           console.log(
-            "\n" + "-----------------------------------------------------------"
+            chalk.cyan(
+              "\n" +
+                "-----------------------------------------------------------"
+            )
           );
           startSearch();
         });
@@ -235,14 +245,18 @@ function viewEmployeesByManager() {
         connection.query(query2, [answer.choices], function (err, res) {
           if (err) throw err;
           console.log(
-            "\n" +
-              "------------ " +
-              answer.choices +
-              "'s Team ---------------------------"
+            chalk.green(
+              "\n" +
+                "------------ " +
+                answer.choices +
+                "'s Team ---------------------"
+            )
           );
           console.table(res);
           console.log(
-            "\n" + "------------------------------------------------------"
+            chalk.green(
+              "\n" + "--------------------------------------------------"
+            )
           );
           startSearch();
         });
@@ -287,7 +301,9 @@ function addEmployee() {
         manager_id: managerId,
       });
       console.log(
-        "\n" + "------------------------------------------------------"
+        chalk.red(
+          "\n" + "------------------------------------------------------" + "\n"
+        )
       );
       console.log(
         "Added the new employee with the name : " +
@@ -295,7 +311,11 @@ function addEmployee() {
           " " +
           answer.lastName
       );
-      console.log("------------------------------------------------------");
+      console.log(
+        chalk.red(
+          "\n" + "------------------------------------------------------"
+        )
+      );
 
       startSearch();
     });
@@ -316,10 +336,16 @@ function addDepartment() {
         name: answer.deptName,
       });
       console.log(
-        "\n" + "------------------------------------------------------"
+        chalk.bgCyan(
+          "\n" + "------------------------------------------------------" + "\n"
+        )
       );
       console.log("Added the new " + answer.deptName + " department.");
-      console.log("------------------------------------------------------");
+      console.log(
+        chalk.bgCyan(
+          "\n" + "------------------------------------------------------"
+        )
+      );
       startSearch();
     });
 }
@@ -352,9 +378,17 @@ function addRole() {
         connection.query(
           `INSERT INTO role (title, salary, department_id) VALUES ("${answer.roleName}", "${answer.roleSalary}", (SELECT id FROM department WHERE name = "${answer.roleDept}"));`
         );
-        console.log("------------------------------------------------------");
+        console.log(
+          chalk.blueBright(
+            "------------------------------------------------------" + "\n"
+          )
+        );
         console.log("Added the new role of: " + answer.roleName);
-        console.log("------------------------------------------------------");
+        console.log(
+          chalk.blueBright(
+            "\n" + "------------------------------------------------------"
+          )
+        );
         startSearch();
       });
   });
@@ -381,13 +415,16 @@ function updateRole() {
         },
       ])
       .then(function (answer) {
-        console.log(answer);
         const query = `UPDATE employee SET role_id = (SELECT id FROM role WHERE title = ?) WHERE CONCAT(first_name,' ',last_name)='${answer.updateEmployee}'`;
 
         connection.query(query, [answer.updateRole], function (err, res) {
           if (err) throw err;
 
-          console.log("------------------------------------------------------");
+          console.log(
+            chalk.magentaBright(
+              "------------------------------------------------------" + "\n"
+            )
+          );
           console.log(
             "Updated the role of " +
               answer.updateEmployee +
@@ -395,7 +432,11 @@ function updateRole() {
               answer.updateRole +
               "."
           );
-          console.log("------------------------------------------------------");
+          console.log(
+            chalk.magentaBright(
+              "\n" + "------------------------------------------------------"
+            )
+          );
           startSearch();
         });
       });
