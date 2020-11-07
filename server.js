@@ -3,7 +3,8 @@
 const inquirer = require("inquirer");
 var mysql = require("mysql");
 const cTable = require("console.table");
-const util = require("util");
+const logo = require("asciiart-logo");
+const config = require("./package.json");
 
 // arrays to store info
 
@@ -23,6 +24,29 @@ var connection = mysql.createConnection({
 connection.connect(function (err) {
   if (err) throw err;
 });
+
+// starts the function with the logo
+
+function startApp() {
+  //console.log(logo(config).render());
+
+  const description =
+    "This application architects and builds a solution for managing a company's employees using node, inquirer, and MySQL.";
+  console.log(
+    logo({
+      name: config.name,
+      font: "Big",
+      logoColor: "cyan",
+      borderColor: "magenta",
+    })
+      .emptyLine()
+      .right("version 1.0.0")
+      .emptyLine()
+      .center(description)
+      .render()
+  );
+  startSearch();
+}
 
 // the function that runs when the app starts
 
@@ -335,7 +359,7 @@ function addRole() {
   });
 }
 
-// still working on this
+// working
 function updateRole() {
   let query =
     "SELECT CONCAT(first_name, ' ', last_name) AS name FROM employee;";
@@ -377,4 +401,4 @@ function updateRole() {
   });
 }
 
-startSearch();
+startApp();
