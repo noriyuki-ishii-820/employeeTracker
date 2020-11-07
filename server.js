@@ -5,6 +5,7 @@ var mysql = require("mysql");
 const cTable = require("console.table");
 const logo = require("asciiart-logo");
 const config = require("./package.json");
+const chalk = require("chalk");
 
 // arrays to store info
 
@@ -28,8 +29,6 @@ connection.connect(function (err) {
 // starts the function with the logo
 
 function startApp() {
-  //console.log(logo(config).render());
-
   const description =
     "This application architects and builds a solution for managing a company's employees using node, inquirer, and MySQL.";
   console.log(
@@ -147,11 +146,13 @@ function viewEmployees() {
   connection.query(query, function (err, res) {
     if (err) throw err;
     console.log(
-      "\n" + "-----------------EMPLOYEE LIST------------------------"
+      chalk.yellow(
+        "\n" + "-----------------EMPLOYEE LIST------------------------" + "\n"
+      )
     );
     console.table(res);
     console.log(
-      "\n" + "------------------------------------------------------"
+      chalk.yellow("------------------------------------------------------")
     );
     startSearch();
   });
