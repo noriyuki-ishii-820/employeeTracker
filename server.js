@@ -59,6 +59,7 @@ function startSearch() {
         choices: [
           "View All Employees",
           "View All Roles",
+          "View All Departments",
           "View All Employees by Department",
           "View All Employees by Manager",
           "Add a new Employee",
@@ -77,6 +78,10 @@ function startSearch() {
 
         case "View All Roles":
           viewRoles();
+          break;
+
+        case "View All Departments":
+          viewDepts();
           break;
 
         case "View All Employees by Department":
@@ -159,6 +164,25 @@ function viewEmployees() {
 }
 
 // working
+function viewDepts() {
+  const query = "SELECT name FROM department";
+
+  connection.query(query, function (err, res) {
+    if (err) throw err;
+    console.log(
+      chalk.magenta(
+        "\n" + "-----------------DEPARTMENT LIST------------------" + "\n"
+      )
+    );
+    console.table(res);
+    console.log(
+      chalk.magenta("------------------------------------------------------")
+    );
+    startSearch();
+  });
+}
+
+// working
 function viewRoles() {
   const query = "SELECT title, salary FROM role";
 
@@ -196,7 +220,6 @@ function viewEmployeesByDept() {
           "SELECT employee.id, employee.first_name, employee.last_name, role.title, department.name AS department, role.salary FROM employee LEFT JOIN role on employee.role_id = role.id LEFT JOIN department ON role.department_id = department.id WHERE department.name =?";
 
         connection.query(query2, [answer.choices], function (err, res) {
-          console.log(res);
           if (err) throw err;
           console.log(
             chalk.cyan(
