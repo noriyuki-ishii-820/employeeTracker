@@ -47,7 +47,7 @@ function startApp() {
   startSearch();
 }
 
-// the function that runs when the app starts
+// the function that shows the options
 
 function startSearch() {
   inquirer
