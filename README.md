@@ -32,6 +32,9 @@ Screenshot 2: The application will output the result in a table accordingly to t
 
 ---
 
+Please find the 40-sec demo video from here:
+https://drive.google.com/file/d/1keavomZ2aokFNoJ3VS0wuKSJMHs2oXy7/view?usp=sharing
+
 ## License
 
 MIT
